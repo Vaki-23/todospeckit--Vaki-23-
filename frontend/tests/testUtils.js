@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
@@ -35,4 +35,18 @@ export async function mountWithPlugins(component, options = {}) {
   });
 
   return { wrapper, router };
+}
+
+export async function setField(wrapper, label, value) {
+  const field = wrapper.findAllComponents({ name: "VTextField" }).find((c) => c.props("label") === label);
+  const input = field.find("input");
+  await input.setValue(value);
+  await input.trigger("blur");
+  await flushPromises();
+}
+
+export async function submitForm(wrapper) {
+  const form = wrapper.find("form");
+  await form.trigger("submit.prevent");
+  await flushPromises();
 }
